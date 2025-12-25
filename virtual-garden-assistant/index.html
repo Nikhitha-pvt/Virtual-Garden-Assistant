@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Virtual Garden Assistant</title>
+  <link rel="stylesheet" href="/src/styles/main.css">
+  <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+          <a class="navbar-brand" href="#">
+            <img src="/assets/images/logo.svg" alt="Garden Assistant Logo" height="40">
+            Virtual Garden Assistant
+          </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item">
+                <button id="btn-new-drawing" class="btn btn-success me-2">New Drawing</button>
+              </li>
+              <li class="nav-item dropdown">
+                <button class="btn btn-outline-primary dropdown-toggle me-2" type="button" id="templates-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                  Templates
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="templates-dropdown">
+                  <li><a class="dropdown-item" href="#" data-template="modern-garden">Modern Garden</a></li>
+                  <li><a class="dropdown-item" href="#" data-template="cottage-garden">Cottage Garden</a></li>
+                  <li><a class="dropdown-item" href="#" data-template="vegetable-garden">Vegetable Garden</a></li>
+                </ul>
+              </li>
+              <li class="nav-item dropdown">
+                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="my-gardens-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                  My Gardens
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="my-gardens-dropdown" id="saved-gardens-list">
+                  <!-- Saved gardens will be dynamically added here -->
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <div class="container-fluid garden-container">
+        <div class="row">
+          <!-- Left Sidebar - Tools -->
+          <div class="col-md-2 tool-sidebar">
+            <div class="tool-group">
+              <div class="tool-category active" data-category="garden-plan">
+                <div class="tool-icon"><img src="/assets/images/icons/garden-plan.svg" alt="Garden Plan"></div>
+                <div class="tool-name">Garden Plan</div>
+              </div>
+              <div class="tool-category" data-category="plot">
+                <div class="tool-icon"><img src="/assets/images/icons/plot.svg" alt="Plot"></div>
+                <div class="tool-name">Plot</div>
+              </div>
+              <div class="tool-category" data-category="houses">
+                <div class="tool-icon"><img src="/assets/images/icons/house.svg" alt="Houses and Extensions"></div>
+                <div class="tool-name">Houses and Extensions</div>
+              </div>
+              <div class="tool-category" data-category="plants">
+                <div class="tool-icon"><img src="/assets/images/icons/plant.svg" alt="Plants"></div>
+                <div class="tool-name">Plants</div>
+              </div>
+              <div class="tool-category" data-category="furniture">
+                <div class="tool-icon"><img src="/assets/images/icons/furniture.svg" alt="Furniture & Leisure"></div>
+                <div class="tool-name">Furniture + Leisure</div>
+              </div>
+              <div class="tool-category" data-category="ponds">
+                <div class="tool-icon"><img src="/assets/images/icons/pond.svg" alt="Ponds and Pools"></div>
+                <div class="tool-name">Ponds and Pools</div>
+              </div>
+              <div class="tool-category" data-category="notes">
+                <div class="tool-icon"><img src="/assets/images/icons/notes.svg" alt="Notes"></div>
+                <div class="tool-name">Notes</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Center - Canvas Area -->
+          <div class="col-md-8 canvas-container">
+            <!-- Toolbar -->
+            <div class="canvas-toolbar">
+              <div class="btn-group">
+                <button id="btn-save" class="btn btn-outline-secondary" title="Save"><i class="bi bi-save"></i></button>
+                <button id="btn-save-as" class="btn btn-outline-secondary" title="Save As"><i class="bi bi-save2"></i></button>
+                <button id="btn-share" class="btn btn-outline-secondary" title="Share"><i class="bi bi-share"></i></button>
+                <button id="btn-delete" class="btn btn-outline-secondary" title="Delete"><i class="bi bi-trash"></i></button>
+                <button id="btn-undo" class="btn btn-outline-secondary" title="Undo"><i class="bi bi-arrow-counterclockwise"></i></button>
+                <button id="btn-redo" class="btn btn-outline-secondary" title="Redo"><i class="bi bi-arrow-clockwise"></i></button>
+                <button id="btn-print" class="btn btn-outline-secondary" title="Print"><i class="bi bi-printer"></i></button>
+                <button id="btn-screenshot" class="btn btn-outline-secondary" title="Take Screenshot"><i class="bi bi-image"></i></button>
+              </div>
+            </div>
+
+            <!-- 3D Garden Canvas -->
+            <div id="garden-canvas"></div>
+
+            <!-- Scale Indicator -->
+            <div class="scale-indicator">
+              <div class="zoom-controls">
+                <button id="btn-zoom-in" class="btn btn-sm btn-light"><i class="bi bi-plus"></i></button>
+                <div class="scale-markers">
+                  <div class="scale-mark">1m</div>
+                  <div class="scale-mark">2m</div>
+                  <div class="scale-mark">3m</div>
+                  <div class="scale-mark">4m</div>
+                  <div class="scale-mark">5m</div>
+                </div>
+                <button id="btn-zoom-out" class="btn btn-sm btn-light"><i class="bi bi-dash"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Sidebar - Elements for Selected Category -->
+          <div class="col-md-2 elements-sidebar">
+            <div class="elements-container">
+              <!-- Elements will be dynamically loaded here based on the selected category -->
+            </div>
+
+            <!-- Element Properties Panel (when an element is selected) -->
+            <div class="properties-panel" style="display: none;">
+              <h5>Properties</h5>
+              <div class="properties-form">
+                <!-- Properties will be dynamically loaded here -->
+              </div>
+            </div>
+
+            <!-- View Controls -->
+            <div class="view-controls">
+              <button id="btn-2d-view" class="btn btn-sm btn-outline-secondary active" title="2D View"><i class="bi bi-square"></i></button>
+              <button id="btn-3d-view" class="btn btn-sm btn-outline-secondary" title="3D View"><i class="bi bi-cube"></i></button>
+              <button id="btn-grid" class="btn btn-sm btn-outline-secondary active" title="Toggle Grid"><i class="bi bi-grid-3x3"></i></button>
+              <button id="btn-snap" class="btn btn-sm btn-outline-secondary active" title="Snap to Grid"><i class="bi bi-magnet"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Modals -->
+    <div class="modal fade" id="save-modal" tabindex="-1" aria-labelledby="save-modal-label" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="save-modal-label">Save Garden</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="save-form">
+              <div class="mb-3">
+                <label for="garden-name" class="form-label">Garden Name</label>
+                <input type="text" class="form-control" id="garden-name" required>
+              </div>
+              <div class="mb-3">
+                <label for="garden-description" class="form-label">Description (optional)</label>
+                <textarea class="form-control" id="garden-description"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="btn-save-confirm">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="share-modal" tabindex="-1" aria-labelledby="share-modal-label" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="share-modal-label">Share Garden</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="share-link" class="form-label">Share Link</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="share-link" readonly>
+                <button class="btn btn-outline-secondary" type="button" id="btn-copy-link">Copy</button>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Share to:</label>
+              <div class="d-flex gap-2">
+                <button class="btn btn-outline-primary" id="btn-share-email"><i class="bi bi-envelope"></i> Email</button>
+                <button class="btn btn-outline-primary" id="btn-share-facebook"><i class="bi bi-facebook"></i> Facebook</button>
+                <button class="btn btn-outline-primary" id="btn-share-twitter"><i class="bi bi-twitter"></i> Twitter</button>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="/src/scripts/main.js"></script>
+</body>
+</html>
